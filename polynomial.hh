@@ -498,10 +498,12 @@ std::basic_ostream<CharT, CharTraitsT>&
 operator<<(std::basic_ostream<CharT, CharTraitsT>& os,
            const Polynomial<CoeffT, OrdT>&         poly)
 {
+    if (poly.terms.empty()) os << CharT { '0' };
+
     bool is_first = true;
     for (auto& [ord, term] : poly.terms)
     {
-        if (term.coeff > 0 && !is_first) os << '+';
+        if (term.coeff > 0 && !is_first) os << CharT { '+' };
         os << term;
         is_first = false;
     }
