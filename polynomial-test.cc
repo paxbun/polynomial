@@ -26,6 +26,8 @@ int main()
 
             cout << "p = " << p << endl;
             cout << "q = " << q << endl;
+            cout << "p(5) = " << p(5) << endl;
+            cout << "q(2.4) = " << q(2.4) << endl;
             cout << "p + q = " << p + q << endl;
             cout << "p - q = " << p - q << endl;
             cout << "p * q = " << p * q << endl;
@@ -33,8 +35,10 @@ int main()
             cout << "2q = " << 2 * q << endl;
             cout << u8"p² = " << pow(p, 2) << endl;
             cout << u8"p³ = " << pow(p, 3) << endl;
+            cout << u8"p(5)² = " << pow(p, 2)(5) << endl;
             cout << u8"q² = " << pow(q, 2) << endl;
             cout << u8"q³ = " << pow(q, 3) << endl;
+            cout << u8"q(2.4)³ = " << pow(q, 3)(2.4) << endl;
         }
         catch (std::invalid_argument)
         {
