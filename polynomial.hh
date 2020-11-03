@@ -3,10 +3,6 @@
 #ifndef POLYNOMIAL_HH
 #define POLYNOMIAL_HH
 
-#ifndef POLYNOMIAL_CH
-#    define POLYNOMIAL_CH 'x'
-#endif
-
 #include <algorithm>
 #include <cassert>
 #include <cctype>
@@ -20,12 +16,16 @@
 #include <type_traits>
 #include <vector>
 
-template <typename CoeffT = double, typename OrdT = std::size_t>
+template <char VariableName = 'x',
+          typename CoeffT   = double,
+          typename OrdT     = std::size_t>
 struct Term
 {
     static_assert(std::is_floating_point_v<CoeffT>,
                   "Coefficient must be floating-point type");
     static_assert(std::is_unsigned_v<OrdT>, "Order must be unsigned");
+
+    static constexpr char Variable = VariableName;
 
     CoeffT coeff;
     OrdT   order;
@@ -133,13 +133,14 @@ struct Term
     }
 };
 
-template <typename CoeffT,
+template <char VariableName,
+          typename CoeffT,
           typename OrdT,
           typename CharT,
           typename CharTraitsT = std::char_traits<CharT>>
 std::basic_ostream<CharT, CharTraitsT>&
 operator<<(std::basic_ostream<CharT, CharTraitsT>& os,
-           const Term<CoeffT, OrdT>&               term)
+           const Term<VariableName, CoeffT, OrdT>& term)
 {
     if (term.order == 0 || term.coeff != 1) os << term.coeff;
 
@@ -149,19 +150,22 @@ operator<<(std::basic_ostream<CharT, CharTraitsT>& os,
     auto order = term.order;
     if (order != 0)
     {
-        os << POLYNOMIAL_CH;
+        os << VariableName;
         if (order != 1)
             for (char c : std::to_string(order)) os << characters[c - '0'];
     }
     return os;
 }
 
-template <typename CoeffT = double, typename OrdT = std::size_t>
+template <char VariableName = 'x',
+          typename CoeffT   = double,
+          typename OrdT     = std::size_t>
 struct Polynomial
 {
   public:
-    using TermType = Term<CoeffT, OrdT>;
+    using TermType = Term<VariableName, CoeffT, OrdT>;
     using MapType  = std::map<OrdT, TermType, std::greater<OrdT>>;
+    static constexpr char Variable = VariableName;
 
   public:
     template <typename CharT       = char,
@@ -207,11 +211,11 @@ struct Polynomial
 
             CharT ch;
             iss >> std::skipws >> ch;
-            if (!iss || ch != POLYNOMIAL_CH)
+            if (!iss || ch != VariableName)
             {
                 if (noCoeff)
                     throw std::invalid_argument { "invalid polynomial" };
-                else if (ch == '+' || ch == '-')
+                else if (!iss || ch == '+' || ch == '-')
                 {
                     iss.seekg(-1, std::ios_base::cur);
                     terms.push_back(coeff);
@@ -480,27 +484,30 @@ struct Polynomial
     }
 };
 
-template <typename CoeffT, typename OrdT>
-Polynomial<CoeffT, OrdT> operator+(const typename Term<CoeffT, OrdT>& lhs,
-                                   const typename Term<CoeffT, OrdT>& rhs)
+template <char VariableName, typename CoeffT, typename OrdT>
+Polynomial<VariableName, CoeffT, OrdT>
+operator+(const typename Term<VariableName, CoeffT, OrdT>& lhs,
+          const typename Term<VariableName, CoeffT, OrdT>& rhs)
 {
-    return Polynomial<CoeffT, OrdT> { lhs, rhs };
+    return Polynomial<VariableName, CoeffT, OrdT> { lhs, rhs };
 }
 
-template <typename CoeffT, typename OrdT>
-Polynomial<CoeffT, OrdT> operator-(const typename Term<CoeffT, OrdT>& lhs,
-                                   const typename Term<CoeffT, OrdT>& rhs)
+template <char VariableName, typename CoeffT, typename OrdT>
+Polynomial<VariableName, CoeffT, OrdT>
+operator-(const typename Term<VariableName, CoeffT, OrdT>& lhs,
+          const typename Term<VariableName, CoeffT, OrdT>& rhs)
 {
-    return Polynomial<CoeffT, OrdT> { lhs, -rhs };
+    return Polynomial<VariableName, CoeffT, OrdT> { lhs, -rhs };
 }
 
-template <typename CoeffT,
+template <char VariableName,
+          typename CoeffT,
           typename OrdT,
           typename CharT,
           typename CharTraitsT = std::char_traits<CharT>>
 std::basic_ostream<CharT, CharTraitsT>&
-operator<<(std::basic_ostream<CharT, CharTraitsT>& os,
-           const Polynomial<CoeffT, OrdT>&         poly)
+operator<<(std::basic_ostream<CharT, CharTraitsT>&       os,
+           const Polynomial<VariableName, CoeffT, OrdT>& poly)
 {
     if (poly.terms.empty()) os << CharT { '0' };
 
