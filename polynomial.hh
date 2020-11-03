@@ -35,6 +35,11 @@ struct Term
         order { order }
     {}
 
+    CoeffT operator()(CoeffT variable) const
+    {
+        return coeff * pow(variable, order);
+    }
+
     bool operator==(const Term& other) const
     {
         return coeff == other.coeff && order == other.order;
@@ -309,6 +314,13 @@ struct Polynomial
     Polynomial& operator=(Polynomial&&) noexcept = default;
 
   public:
+    CoeffT operator()(CoeffT variable) const
+    {
+        CoeffT sum = CoeffT { 0 };
+        for (auto& [key, value] : terms) sum += value(variable);
+        return sum;
+    }
+
     bool operator==(const Polynomial& other) const
     {
         for (auto lit = terms.begin(), rit = other.terms.begin();
