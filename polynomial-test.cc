@@ -26,6 +26,10 @@ int main()
 
             cout << "p = " << p << endl;
             cout << "q = " << q << endl;
+            cout << u8"∫ p dx = " << p.Integral() << endl;
+            cout << u8"∫ q dx = " << q.Integral() << endl;
+            cout << "dp/dx = " << p.Diff() << endl;
+            cout << "dq/dx = " << q.Diff() << endl;
             cout << "p(5) = " << p(5) << endl;
             cout << "q(2.4) = " << q(2.4) << endl;
             cout << "p + q = " << p + q << endl;
