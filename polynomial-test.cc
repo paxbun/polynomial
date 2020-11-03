@@ -15,9 +15,16 @@ int main()
         getline(cin, str);
         if (str.empty()) break;
 
-        auto p = Polynomial<double>::FromString(str);
-        cout << "p = " << p << endl;
-        cout << u8"p² = " << pow(p, 2) << endl;
-        cout << u8"p³ = " << pow(p, 3) << endl;
+        try
+        {
+            auto p = Polynomial<double>::FromString(str);
+            cout << "p = " << p << endl;
+            cout << u8"p² = " << pow(p, 2) << endl;
+            cout << u8"p³ = " << pow(p, 3) << endl;
+        }
+        catch (std::invalid_argument)
+        {
+            cout << "Invalid polynomial!" << endl;
+        }
     }
 }
