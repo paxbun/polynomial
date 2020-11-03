@@ -16,20 +16,20 @@ int main()
             string pStr;
             getline(cin, pStr);
             if (pStr.empty()) break;
-            auto p = Polynomial<double>::FromString(pStr);
+            auto p = Polynomial<'z'>::FromString(pStr);
 
             cout << "q = ";
             string qStr;
             getline(cin, qStr);
             if (qStr.empty()) break;
-            auto q = Polynomial<double>::FromString(qStr);
+            auto q = Polynomial<'z'>::FromString(qStr);
 
             cout << "p = " << p << endl;
             cout << "q = " << q << endl;
-            cout << u8"∫ p dx = " << p.Integral() << endl;
-            cout << u8"∫ q dx = " << q.Integral() << endl;
-            cout << "dp/dx = " << p.Diff() << endl;
-            cout << "dq/dx = " << q.Diff() << endl;
+            cout << u8"∫ p d" << p.Variable << " = " << p.Integral() << endl;
+            cout << u8"∫ q d" << q.Variable << " = " << q.Integral() << endl;
+            cout << "dp/d" << p.Variable << " = " << p.Diff() << endl;
+            cout << "dq/d" << q.Variable << " = " << q.Diff() << endl;
             cout << "p(5) = " << p(5) << endl;
             cout << "q(2.4) = " << q(2.4) << endl;
             cout << "p + q = " << p + q << endl;
