@@ -24,8 +24,8 @@ template <typename CoeffT = double, typename OrdT = std::size_t>
 struct Term
 {
     static_assert(std::is_floating_point_v<CoeffT>,
-                  "CoeffTicient must be floating-point type");
-    static_assert(std::is_unsigned_v<OrdT>, "OrdTer must be unsigned");
+                  "Coefficient must be floating-point type");
+    static_assert(std::is_unsigned_v<OrdT>, "Order must be unsigned");
 
     CoeffT coeff;
     OrdT   order;
@@ -118,6 +118,18 @@ struct Term
     friend Term pow(const Term& term, OrdT order)
     {
         return Term { std::pow(term.coeff, order), term.order * order };
+    }
+
+    Term Diff() const
+    {
+        if (order == 0) return 0;
+        else
+            return Term { coeff * order, order - 1 };
+    }
+
+    Term Integral() const
+    {
+        return Term { coeff / (static_cast<CoeffT>(order) + 1), order + 1 };
     }
 };
 
@@ -437,6 +449,29 @@ struct Polynomial
     {
         Polynomial rtn { 1 };
         for (OrdT i = 0; i < order; ++i) rtn *= term;
+        return rtn;
+    }
+
+    Polynomial Diff() const
+    {
+        Polynomial rtn;
+        for (auto& [key, value] : terms)
+        {
+            auto diff = value.Diff();
+            if (diff.coeff != CoeffT { 0.0 })
+                rtn.terms.insert(std::make_pair(diff.order, diff));
+        }
+        return rtn;
+    }
+
+    Polynomial Integral() const
+    {
+        Polynomial rtn;
+        for (auto& [key, value] : terms)
+        {
+            auto integral = value.Integral();
+            rtn.terms.insert(std::make_pair(integral.order, integral));
+        }
         return rtn;
     }
 };
