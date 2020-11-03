@@ -211,11 +211,14 @@ struct Polynomial
             {
                 if (noCoeff)
                     throw std::invalid_argument { "invalid polynomial" };
-                else
+                else if (ch == '+' || ch == '-')
                 {
+                    iss.seekg(-1, std::ios_base::cur);
                     terms.push_back(coeff);
                     continue;
                 }
+                else
+                    throw std::invalid_argument { "invalid polynomial" };
             }
 
             CharT pow;
@@ -223,7 +226,7 @@ struct Polynomial
 
             if (!iss)
             {
-                terms.push_back(coeff);
+                terms.push_back({ coeff, 1 });
                 break;
             }
             else if (pow != '^')
@@ -448,6 +451,7 @@ struct Polynomial
     friend Polynomial pow(const Polynomial& term, OrdT order)
     {
         Polynomial rtn { 1 };
+
         for (OrdT i = 0; i < order; ++i) rtn *= term;
         return rtn;
     }
